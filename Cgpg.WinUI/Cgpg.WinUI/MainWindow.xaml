@@ -1,0 +1,36 @@
+﻿<Window
+    x:Class="Cgpg.WinUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <NavigationView x:Name="Navigator"
+                    SelectionChanged="Navigator_SelectionChanged">
+        <NavigationView.MenuItems>
+            <NavigationViewItem Content="Home"
+                                Icon="Home"
+                                Tag="tagHome"/>
+            <NavigationViewItemSeparator/>
+            <NavigationViewItem Content="Blur algorithmns"
+                                Icon="Bookmarks"
+                                SelectsOnInvoked="False">
+                <NavigationViewItem.MenuItems>
+                    <NavigationViewItem Content="Box kernel"
+                                        Icon="Document"
+                                        Tag="tagBlurAlgoBox"/>
+                    <NavigationViewItem Content="Gaussian kernel"
+                                        Icon="Document"
+                                        Tag="tagBlurAlgoGaussian"/>
+                    <NavigationViewItem Content="Spatially separable kernel"
+                                        Icon="Document"
+                                        Tag="tagBlurAlgoSeparable"/>
+                    <NavigationViewItem Content="Custom kernel"
+                                        Icon="Document"
+                                        Tag="tagBlurAlgoCustom"/>
+                </NavigationViewItem.MenuItems>
+            </NavigationViewItem>
+        </NavigationView.MenuItems>
+        <Frame x:Name="MainFrame"/>
+    </NavigationView>
+</Window>

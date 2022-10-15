@@ -1,0 +1,40 @@
+﻿<Page
+    x:Class="Cgpg.WinUI.Pages.BlurAlgoBoxPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Image Source="{x:Bind ViewModel.DisplayImage, Mode=OneWay}"/>
+        </Grid>
+
+        <Grid Grid.Column="1"
+              Margin="4 10 4 10"
+              Background="White"
+              CornerRadius="8">
+            <StackPanel Orientation="Vertical"
+                        Margin="4 6 4 6"
+                        Spacing="4">
+                <ComboBox Header="Source image"
+                          Width="280"
+                          ItemsSource="{x:Bind ViewModel.SelectableImages}"
+                          SelectedIndex="{x:Bind ViewModel.SelectedSourceImageIndex, Mode=TwoWay}"/>
+                <Slider Header="Sample radius"
+                        Value="{x:Bind ViewModel.SampleRadius, Mode=TwoWay}"
+                        Width="280"
+                        Minimum="1"
+                        Maximum="50"
+                        StepFrequency="1"
+                        HorizontalAlignment="Left"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
