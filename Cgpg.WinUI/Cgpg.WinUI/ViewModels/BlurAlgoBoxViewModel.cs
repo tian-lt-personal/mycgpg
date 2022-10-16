@@ -67,6 +67,13 @@ internal class BlurAlgoBoxViewModel : DependencyObject
                 await vm.ReloadSourceImage(uri);
             }));
 
+    public static readonly DependencyProperty IsProcessingProperty =
+        DependencyProperty.Register(
+            nameof(IsProcessing),
+            typeof(bool),
+            typeof(BlurAlgoBoxViewModel),
+            new PropertyMetadata(false));
+
     public string[] SelectableImages { get; }
 
     public int SampleRadius
@@ -92,6 +99,12 @@ internal class BlurAlgoBoxViewModel : DependencyObject
     {
         get { return (int)GetValue(SelectedSourceImageIndexProperty); }
         set { SetValue(SelectedSourceImageIndexProperty, value); }
+    }
+
+    public bool IsProcessing
+    {
+        get { return (bool)GetValue(IsProcessingProperty); }
+        set { SetValue(IsProcessingProperty, value); }
     }
 
     private string GetSelectableImageUri(int index)
@@ -156,6 +169,8 @@ internal class BlurAlgoBoxViewModel : DependencyObject
             Monitor.Wait(mtxGetBitmapSink);
         }
 
+        uiQueue_.TryEnqueue(() => IsProcessing = true);
+
         var currProcId = Interlocked.Increment(ref topImgProcId_);
 
         var succ = ProcessImage(
@@ -169,6 +184,7 @@ internal class BlurAlgoBoxViewModel : DependencyObject
         if (succ)
         {
             var mtxSetDisplayImage = new object();
+            uiQueue_.TryEnqueue(() => IsProcessing = false);
             if (uiQueue_.TryEnqueue(() =>
             {
                 DisplayImage = bitmap;
@@ -231,9 +247,11 @@ internal class BlurAlgoBoxViewModel : DependencyObject
                 sink.Write(color);
             }
 
-            if (y % 10 == 0 &&
+            if (y % 20 == 0 &&
                 !shouldCont())
+            {
                 return false;
+            }
         }
 
         return true;

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:Cgpg.WinUI"
     mc:Ignorable="d"
     NavigationCacheMode="Enabled"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -14,6 +15,9 @@
         </Grid.ColumnDefinitions>
         <Grid>
             <Image Source="{x:Bind ViewModel.DisplayImage, Mode=OneWay}"/>
+            <ProgressRing Width="80"
+                          Height="80"
+                          IsActive="{x:Bind ViewModel.IsProcessing, Mode=OneWay}"/>
         </Grid>
 
         <Grid Grid.Column="1"
