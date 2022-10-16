@@ -11,6 +11,9 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using WinRT;
+using System.Threading;
+using System.Collections.Generic;
+using System.IO;
 
 internal class BlurAlgoBoxViewModel : DependencyObject
 {
@@ -20,9 +23,14 @@ internal class BlurAlgoBoxViewModel : DependencyObject
             .SelectableImageMap
             .Select(x => x.Key)
             .ToArray();
-        uiQueue.TryEnqueue(async () => await ReloadSourceImage(GetSelectableImageUri(0)));
+        uiQueue_ = uiQueue;
+        uiQueue_.TryEnqueue(async () => await ReloadSourceImage(GetSelectableImageUri(0)));
     }
 
+    private readonly DispatcherQueue uiQueue_;
+    private readonly object mtxImgMetadata_ = new object();
+    private long topImgProcId_ = 0;
+    private int sampleRadius_;
     private int srcImgWidth_;
     private int srcImgHeight_;
     private byte[] srcImgData_;
@@ -35,9 +43,8 @@ internal class BlurAlgoBoxViewModel : DependencyObject
             new PropertyMetadata(1, (d, e) =>
             {
                 if (e.NewValue == null) return;
-
                 var vm = (BlurAlgoBoxViewModel)d;
-                vm.DisplayImage = ProcessImage(vm.SampleRadius, vm.srcImgWidth_, vm.srcImgHeight_, vm.srcImgData_);
+                _ = Task.Run(() => vm.ProcessImage());
             }));
 
     public static readonly DependencyProperty DisplayImageProperty =
@@ -55,7 +62,6 @@ internal class BlurAlgoBoxViewModel : DependencyObject
             new PropertyMetadata(0, async (d, e) =>
             {
                 if (e.NewValue == null) return;
-
                 var vm = (BlurAlgoBoxViewModel)d;
                 var uri = vm.GetSelectableImageUri((int)e.NewValue);
                 await vm.ReloadSourceImage(uri);
@@ -66,7 +72,14 @@ internal class BlurAlgoBoxViewModel : DependencyObject
     public int SampleRadius
     {
         get { return (int)GetValue(SampleRadiusProperty); }
-        set { SetValue(SampleRadiusProperty, value); }
+        set
+        {
+            lock (mtxImgMetadata_)
+            {
+                sampleRadius_ = value;
+            }
+            SetValue(SampleRadiusProperty, value);
+        }
     }
 
     public WriteableBitmap DisplayImage
@@ -89,19 +102,100 @@ internal class BlurAlgoBoxViewModel : DependencyObject
         var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(fileUri));
         using var stream = await file.OpenReadAsync();
         var decoder = await BitmapDecoder.CreateAsync(stream);
-        srcImgWidth_ = (int)decoder.PixelWidth;
-        srcImgHeight_ = (int)decoder.PixelHeight;
-        srcImgData_ = (await decoder.GetPixelDataAsync()).DetachPixelData();
 
-        DisplayImage = ProcessImage(SampleRadius, srcImgWidth_, srcImgHeight_, srcImgData_);
+        var width = (int)decoder.PixelWidth;
+        var height = (int)decoder.PixelHeight;
+        var data = (await decoder.GetPixelDataAsync()).DetachPixelData();
+        lock (mtxImgMetadata_)
+        {
+            srcImgWidth_ = width;
+            srcImgHeight_ = height;
+            srcImgData_ = data;
+        }
+        _ = Task.Run(() => ProcessImage());
     }
 
-    private static unsafe WriteableBitmap ProcessImage(int radius, int width, int height, byte[] data)
+    private void ProcessImage()
     {
-        var bitmap = new WriteableBitmap(width, height);
+        var cts = new CancellationTokenSource();
+        var tid = Task.CurrentId.Value;
+
+        int sampleRadius;
+        int width;
+        int height;
+        byte[] data;
+        lock (mtxImgMetadata_)
+        {
+            sampleRadius = sampleRadius_;
+            width = srcImgWidth_;
+            height = srcImgHeight_;
+            data = srcImgData_;
+        }
+
+        var mtxGetBitmapSink = new object();
+        WriteableBitmap bitmap = null;
+        Stream sink = null;
+        if (!uiQueue_.TryEnqueue(() =>
+        {
+            lock (mtxGetBitmapSink)
+            {
+                lock (mtxImgMetadata_)
+                {
+                    bitmap = new WriteableBitmap(srcImgWidth_, srcImgHeight_);
+                    sink = bitmap.PixelBuffer.AsStream();
+                }
+                Monitor.Pulse(mtxGetBitmapSink);
+            }
+        }))
+        {
+            return;
+        }
+
+        lock (mtxGetBitmapSink)
+        {
+            Monitor.Wait(mtxGetBitmapSink);
+        }
+
+        var currProcId = Interlocked.Increment(ref topImgProcId_);
+
+        var succ = ProcessImage(
+            sampleRadius,
+            width,
+            height,
+            data,
+            sink,
+            () => Interlocked.Read(ref topImgProcId_) == currProcId);
+
+        if (succ)
+        {
+            var mtxSetDisplayImage = new object();
+            if (uiQueue_.TryEnqueue(() =>
+            {
+                DisplayImage = bitmap;
+                lock (mtxSetDisplayImage)
+                {
+                    Monitor.Pulse(mtxSetDisplayImage);
+                }
+            }))
+            {
+                lock (mtxSetDisplayImage)
+                {
+                    Monitor.Wait(mtxSetDisplayImage);
+                }
+            }
+        }
+    }
+
+    private static unsafe bool ProcessImage(
+        int radius,
+        int width,
+        int height,
+        byte[] data,
+        Stream sink,
+        Func<bool> shouldCont)
+    {
         var kernelWidth = radius * 2 + 1;
         var kernelWidthSquare = kernelWidth * kernelWidth;
-        using var sink = bitmap.PixelBuffer.AsStream();
 
         int b = 0;
         int g = 0;
@@ -136,8 +230,12 @@ internal class BlurAlgoBoxViewModel : DependencyObject
                 color[2] = (byte)r;
                 sink.Write(color);
             }
+
+            if (y % 10 == 0 &&
+                !shouldCont())
+                return false;
         }
 
-        return bitmap;
+        return true;
     }
 }
