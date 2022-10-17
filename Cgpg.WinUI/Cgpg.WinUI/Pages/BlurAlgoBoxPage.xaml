@@ -26,15 +26,15 @@
             <StackPanel Orientation="Vertical"
                         Margin="0 8 0 8"
                         Spacing="4">
-                <ComboBox Header="Source image"
+                <ComboBox Header="Source image:"
                           Width="280"
                           Margin="4 8 4 0"
                           ItemsSource="{x:Bind ViewModel.SelectableImages}"
                           SelectedIndex="{x:Bind ViewModel.SelectedSourceImageIndex, Mode=TwoWay}"/>
-                <Slider Header="Sample radius"
+                <Slider Header="Sample radius:"
                         Value="{x:Bind ViewModel.SampleRadius, Mode=TwoWay}"
                         Width="280"
-                        Minimum="1"
+                        Minimum="0"
                         Maximum="50"
                         StepFrequency="1"
                         Margin="4 0 4 0"

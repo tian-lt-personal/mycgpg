@@ -13,7 +13,7 @@ using MyCgpg;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 
-internal class BlurAlgoBoxViewModel : DependencyObject
+internal sealed class BlurAlgoBoxViewModel : DependencyObject
 {
     public BlurAlgoBoxViewModel(DispatcherQueue uiQueue)
     {
@@ -27,7 +27,7 @@ internal class BlurAlgoBoxViewModel : DependencyObject
 
     private readonly DispatcherQueue uiQueue_;
     private readonly object mtxImgMetadata_ = new object();
-    private long topImgProcId_ = 0;
+    private readonly DiscardCondition discardProc_ = new DiscardCondition();
     private int sampleRadius_;
     private int srcImgWidth_;
     private int srcImgHeight_;
@@ -38,7 +38,7 @@ internal class BlurAlgoBoxViewModel : DependencyObject
             nameof(SampleRadius),
             typeof(int),
             typeof(BlurAlgoBoxViewModel),
-            new PropertyMetadata(1, (d, e) =>
+            new PropertyMetadata(0, (d, e) =>
             {
                 if (e.NewValue == null) return;
                 var vm = (BlurAlgoBoxViewModel)d;
@@ -128,9 +128,6 @@ internal class BlurAlgoBoxViewModel : DependencyObject
 
     private void ProcessImage()
     {
-        var cts = new CancellationTokenSource();
-        var tid = Task.CurrentId.Value;
-
         int sampleRadius;
         int width;
         int height;
@@ -143,60 +140,43 @@ internal class BlurAlgoBoxViewModel : DependencyObject
             data = srcImgData_;
         }
 
-        var mtxGetBitmapSink = new object();
+        var fenceGetBitmapSink = new SyncFence();
         WriteableBitmap bitmap = null;
         Stream sink = null;
         if (!uiQueue_.TryEnqueue(() =>
         {
-            lock (mtxGetBitmapSink)
-            {
-                lock (mtxImgMetadata_)
-                {
-                    bitmap = new WriteableBitmap(srcImgWidth_, srcImgHeight_);
-                    sink = bitmap.PixelBuffer.AsStream();
-                }
-                Monitor.Pulse(mtxGetBitmapSink);
-            }
+            bitmap = new WriteableBitmap(width, height);
+            sink = bitmap.PixelBuffer.AsStream();
+            fenceGetBitmapSink.Signal();
         }))
         {
             return;
         }
-
-        lock (mtxGetBitmapSink)
-        {
-            Monitor.Wait(mtxGetBitmapSink);
-        }
+        fenceGetBitmapSink.Wait();
 
         uiQueue_.TryEnqueue(() => IsProcessing = true);
 
-        var currProcId = Interlocked.Increment(ref topImgProcId_);
-
-        var succ = ImageLowFilter.BoxBlur(
+        var tag = discardProc_.Tag();
+        if (!ImageLowFilter.BoxBlur(
             sampleRadius,
             width,
             height,
             data,
             sink,
-            () => Interlocked.Read(ref topImgProcId_) == currProcId);
-
-        if (succ)
+            () => discardProc_.CheckTag(tag)))
         {
-            var mtxSetDisplayImage = new object();
-            uiQueue_.TryEnqueue(() => IsProcessing = false);
-            if (uiQueue_.TryEnqueue(() =>
-            {
-                DisplayImage = bitmap;
-                lock (mtxSetDisplayImage)
-                {
-                    Monitor.Pulse(mtxSetDisplayImage);
-                }
-            }))
-            {
-                lock (mtxSetDisplayImage)
-                {
-                    Monitor.Wait(mtxSetDisplayImage);
-                }
-            }
+            return;
+        }
+
+        var fenceSetImage = new SyncFence();
+        uiQueue_.TryEnqueue(() => IsProcessing = false);
+        if (uiQueue_.TryEnqueue(() =>
+        {
+            DisplayImage = bitmap;
+            fenceSetImage.Signal();
+        }))
+        {
+            fenceSetImage.Wait();
         }
     }
 }

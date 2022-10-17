@@ -2,13 +2,58 @@
     x:Class="Cgpg.WinUI.Pages.BlurAlgoGaussianPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Cgpg.WinUI.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Image Source="{x:Bind ViewModel.DisplayImage, Mode=OneWay}"/>
+            <ProgressRing Width="80"
+                          Height="80"
+                          IsActive="{x:Bind ViewModel.IsProcessing, Mode=OneWay}"/>
+        </Grid>
 
+        <Grid Grid.Column="1"
+              Margin="4 10 4 10"
+              Background="White"
+              CornerRadius="8">
+            <StackPanel Orientation="Vertical"
+                        Margin="0 8 0 8"
+                        Spacing="4">
+                <ComboBox Header="Source image:"
+                          Width="280"
+                          Margin="4 8 4 0"
+                          ItemsSource="{x:Bind ViewModel.SelectableImages}"
+                          SelectedIndex="{x:Bind ViewModel.SelectedSourceImageIndex, Mode=TwoWay}"/>
+                <Slider Header="Sample radius:"
+                        Value="{x:Bind ViewModel.SampleRadius, Mode=TwoWay}"
+                        Width="280"
+                        Minimum="0"
+                        Maximum="50"
+                        StepFrequency="1"
+                        Margin="4 0 4 0"
+                        HorizontalAlignment="Left"/>
+                <NumberBox x:Name="SigmaNum"
+                           Header="Sigma:"
+                           Margin="4 0 4 0"
+                           Value="{x:Bind ViewModel.Sigma, Mode=TwoWay}"
+                           SpinButtonPlacementMode="Inline"
+                           SmallChange="0.25"
+                           LargeChange="2.0"/>
+                <TextBox Text="{x:Bind ViewModel.KernelText, Mode=OneWay}"
+                         TextWrapping="NoWrap"
+                         AcceptsReturn="True"
+                         MinWidth="200"
+                         MinHeight="180"
+                         IsReadOnly="True"
+                         PlaceholderText="Kernel value ..."/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>
