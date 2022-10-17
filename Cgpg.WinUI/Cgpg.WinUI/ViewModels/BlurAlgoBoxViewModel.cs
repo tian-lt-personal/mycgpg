@@ -1,19 +1,17 @@
 ﻿namespace Cgpg.WinUI.ViewModels;
 
-using Cgpg.WinUI.ComDef;
 using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
+using MyCgpg;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
-using WinRT;
-using System.Threading;
-using System.Collections.Generic;
-using System.IO;
 
 internal class BlurAlgoBoxViewModel : DependencyObject
 {
@@ -173,7 +171,7 @@ internal class BlurAlgoBoxViewModel : DependencyObject
 
         var currProcId = Interlocked.Increment(ref topImgProcId_);
 
-        var succ = ProcessImage(
+        var succ = ImageLowFilter.BoxBlur(
             sampleRadius,
             width,
             height,
@@ -200,60 +198,5 @@ internal class BlurAlgoBoxViewModel : DependencyObject
                 }
             }
         }
-    }
-
-    private static unsafe bool ProcessImage(
-        int radius,
-        int width,
-        int height,
-        byte[] data,
-        Stream sink,
-        Func<bool> shouldCont)
-    {
-        var kernelWidth = radius * 2 + 1;
-        var kernelWidthSquare = kernelWidth * kernelWidth;
-
-        int b = 0;
-        int g = 0;
-        int r = 0;
-        var color = new byte[4];
-        color[3] = 0xff;
-        for (int y = 0; y < height; ++y)
-        {
-            for (int x = 0; x < width; ++x)
-            {
-                b = 0; g = 0; r = 0;
-
-                for (int u = 0; u < kernelWidth; ++u)
-                {
-                    for (int v = 0; v < kernelWidth; ++v)
-                    {
-                        var index =
-                            Math.Clamp(x - radius + u, 0, width - 1) * 4 +
-                            Math.Clamp(y - radius + v, 0, height - 1) * width * 4;
-                        b += data[index];
-                        g += data[index + 1];
-                        r += data[index + 2];
-                    }
-                }
-
-                b /= kernelWidthSquare;
-                g /= kernelWidthSquare;
-                r /= kernelWidthSquare;
-
-                color[0] = (byte)b;
-                color[1] = (byte)g;
-                color[2] = (byte)r;
-                sink.Write(color);
-            }
-
-            if (y % 20 == 0 &&
-                !shouldCont())
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
