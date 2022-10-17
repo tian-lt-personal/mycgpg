@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:Cgpg.WinUI"
     mc:Ignorable="d"
     NavigationCacheMode="Enabled"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -25,10 +24,11 @@
               Background="White"
               CornerRadius="8">
             <StackPanel Orientation="Vertical"
-                        Margin="4 6 4 6"
+                        Margin="0 8 0 8"
                         Spacing="4">
                 <ComboBox Header="Source image"
                           Width="280"
+                          Margin="4 8 4 0"
                           ItemsSource="{x:Bind ViewModel.SelectableImages}"
                           SelectedIndex="{x:Bind ViewModel.SelectedSourceImageIndex, Mode=TwoWay}"/>
                 <Slider Header="Sample radius"
@@ -37,6 +37,7 @@
                         Minimum="1"
                         Maximum="50"
                         StepFrequency="1"
+                        Margin="4 0 4 0"
                         HorizontalAlignment="Left"/>
             </StackPanel>
         </Grid>

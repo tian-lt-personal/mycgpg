@@ -1,13 +1,18 @@
 ﻿namespace Cgpg.WinUI;
 
-using Cgpg.WinUI.Pages;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using Cgpg.WinUI.Pages;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
+using WinRT.Interop;
 
 public sealed partial class MainWindow : Window
 {
+    private readonly AppWindow appWindow_;
     private readonly IDictionary<string, Action<MainWindow>> navigatorActions_
         = new Dictionary<string, Action<MainWindow>>()
         {
@@ -23,6 +28,8 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        appWindow_ = GetCurrentAppWindow(this);
+        CustomizeTitleBar();
         Navigator.SelectedItem = Navigator.MenuItems[0];
     }
 
@@ -40,5 +47,25 @@ public sealed partial class MainWindow : Window
         {
             navigatorActions_["tagNotFound"](this);
         }
+    }
+
+    private void CustomizeTitleBar()
+    {
+        appWindow_.Title = "CG playground";
+        appWindow_.TitleBar.ExtendsContentIntoTitleBar = true;
+        appWindow_.TitleBar.ButtonForegroundColor = Colors.Black;
+        appWindow_.TitleBar.ButtonHoverForegroundColor = Colors.Black;
+        appWindow_.TitleBar.ButtonPressedForegroundColor = Colors.Black;
+        appWindow_.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+        appWindow_.TitleBar.ButtonHoverBackgroundColor = Colors.LightGray;
+        appWindow_.TitleBar.ButtonPressedBackgroundColor = Colors.DimGray;
+        AppIcon.Source = new BitmapImage(new Uri("ms-appx:///Assets/appicon-16x16.png"));
+    }
+
+    private static AppWindow GetCurrentAppWindow(object target)
+    {
+        var hwnd = WindowNative.GetWindowHandle(target);
+        var wndId = Win32Interop.GetWindowIdFromWindow(hwnd);
+        return AppWindow.GetFromWindowId(wndId);
     }
 }

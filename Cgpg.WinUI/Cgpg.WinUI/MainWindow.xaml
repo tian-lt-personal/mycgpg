@@ -5,32 +5,50 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <NavigationView x:Name="Navigator"
-                    SelectionChanged="Navigator_SelectionChanged">
-        <NavigationView.MenuItems>
-            <NavigationViewItem Content="Home"
-                                Icon="Home"
-                                Tag="tagHome"/>
-            <NavigationViewItemSeparator/>
-            <NavigationViewItem Content="Blur algorithmns"
-                                Icon="Bookmarks"
-                                SelectsOnInvoked="False">
-                <NavigationViewItem.MenuItems>
-                    <NavigationViewItem Content="Box kernel"
-                                        Icon="Document"
-                                        Tag="tagBlurAlgoBox"/>
-                    <NavigationViewItem Content="Gaussian kernel"
-                                        Icon="Document"
-                                        Tag="tagBlurAlgoGaussian"/>
-                    <NavigationViewItem Content="Spatially separable kernel"
-                                        Icon="Document"
-                                        Tag="tagBlurAlgoSeparable"/>
-                    <NavigationViewItem Content="Custom kernel"
-                                        Icon="Document"
-                                        Tag="tagBlurAlgoCustom"/>
-                </NavigationViewItem.MenuItems>
-            </NavigationViewItem>
-        </NavigationView.MenuItems>
-        <Frame x:Name="MainFrame"/>
-    </NavigationView>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal"
+                    Spacing="4">
+            <Image x:Name="AppIcon"
+                   Width="16"
+                   Height="16"
+                   Margin="8 0 0 0"
+                   VerticalAlignment="Center"/>
+            <TextBlock Text="CG playground"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
+        <NavigationView x:Name="Navigator"
+                        Grid.Row="1"
+                        SelectionChanged="Navigator_SelectionChanged">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Home"
+                                    Icon="Home"
+                                    Tag="tagHome"/>
+                <NavigationViewItemSeparator/>
+                <NavigationViewItem Content="Blur algorithmns"
+                                    Icon="Bookmarks"
+                                    SelectsOnInvoked="False">
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Box kernel"
+                                            Icon="Document"
+                                            Tag="tagBlurAlgoBox"/>
+                        <NavigationViewItem Content="Gaussian kernel"
+                                            Icon="Document"
+                                            Tag="tagBlurAlgoGaussian"/>
+                        <NavigationViewItem Content="Spatially separable kernel"
+                                            Icon="Document"
+                                            Tag="tagBlurAlgoSeparable"/>
+                        <NavigationViewItem Content="Custom kernel"
+                                            Icon="Document"
+                                            Tag="tagBlurAlgoCustom"/>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+            <Frame x:Name="MainFrame"/>
+        </NavigationView>
+    </Grid>
 </Window>
