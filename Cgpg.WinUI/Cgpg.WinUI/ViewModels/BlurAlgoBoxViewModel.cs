@@ -2,14 +2,14 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 using System.Threading.Tasks;
+using Cgpg.WinUI.Slices;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using MyCgpg;
+using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 
@@ -17,10 +17,6 @@ internal sealed class BlurAlgoBoxViewModel : DependencyObject
 {
     public BlurAlgoBoxViewModel(DispatcherQueue uiQueue)
     {
-        SelectableImages = GlobalConfigs
-            .SelectableImageMap
-            .Select(x => x.Key)
-            .ToArray();
         uiQueue_ = uiQueue;
         uiQueue_.TryEnqueue(async () => await ReloadSourceImage(GetSelectableImageUri(0)));
     }
@@ -72,7 +68,7 @@ internal sealed class BlurAlgoBoxViewModel : DependencyObject
             typeof(BlurAlgoBoxViewModel),
             new PropertyMetadata(false));
 
-    public string[] SelectableImages { get; }
+    public SelectableImages SelectableImages { get; } = new SelectableImages();
 
     public int SampleRadius
     {

@@ -31,7 +31,8 @@
                 <NavigationViewItemSeparator/>
                 <NavigationViewItem Content="Blur algorithmns"
                                     Icon="Bookmarks"
-                                    SelectsOnInvoked="False">
+                                    SelectsOnInvoked="False"
+                                    IsExpanded="True">
                     <NavigationViewItem.MenuItems>
                         <NavigationViewItem Content="Box kernel"
                                             Icon="Document"

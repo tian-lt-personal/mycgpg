@@ -2,26 +2,21 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using Cgpg.WinUI.Slices;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using MyCgpg;
 using Windows.Graphics.Imaging;
-using Windows.Graphics.Printing;
 using Windows.Storage;
 
 internal sealed class BlurAlgoGaussianViewModel : DependencyObject
 {
     public BlurAlgoGaussianViewModel(DispatcherQueue uiQueue)
     {
-        SelectableImages = GlobalConfigs
-            .SelectableImageMap
-            .Select(x => x.Key)
-            .ToArray();
         uiQueue_ = uiQueue;
         uiQueue_.TryEnqueue(async () => await ReloadSourceImage(GetSelectableImageUri(0)));
     }
@@ -99,7 +94,7 @@ internal sealed class BlurAlgoGaussianViewModel : DependencyObject
             new PropertyMetadata(null));
 
 
-    public string[] SelectableImages { get; }
+    public SelectableImages SelectableImages { get; } = new SelectableImages();
 
     public int SelectedSourceImageIndex
     {
@@ -211,7 +206,7 @@ internal sealed class BlurAlgoGaussianViewModel : DependencyObject
             out var kernel);
 
         var tag = discardProc_.Tag();
-        if (!ImageLowFilter.ConvolutionFilter(
+        if (!ImageLowFilter.ConvolutionBlur(
             width,
             height,
             data,

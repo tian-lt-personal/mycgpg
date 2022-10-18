@@ -8,6 +8,6 @@
     NavigationCacheMode="Required"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
-        <!-- WebView2 Source="https://tian-lt-personal.github.io"/-->
+        <WebView2 Source="{x:Bind HomeLink}"/>
     </Grid>
 </Page>
