@@ -43,7 +43,7 @@ public class GreedyLb
         foreach (var word in paragraph)
         {
             var extent = getWordExtent(word);
-            if (pos.X + extent.W < lineWidth)
+            if (pos.X + extent.W <= lineWidth)
             {
                 pos.X += extent.W;
                 yield return (pos, word);
