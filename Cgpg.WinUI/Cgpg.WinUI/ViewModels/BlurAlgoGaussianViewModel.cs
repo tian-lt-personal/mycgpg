@@ -200,13 +200,13 @@ internal sealed class BlurAlgoGaussianViewModel : DependencyObject
 
         uiQueue_.TryEnqueue(() => IsProcessing = true);
         var kernelWidth = sampleRadius * 2 + 1;
-        ImageLowFilter.Generate2DGaussianKernel(
+        ImageLowpassFilter.Generate2DGaussianKernel(
             kernelWidth,
             sigma,
             out var kernel);
 
         var tag = discardProc_.Tag();
-        if (!ImageLowFilter.ConvolutionBlur(
+        if (!ImageLowpassFilter.ConvolutionBlur(
             width,
             height,
             data,

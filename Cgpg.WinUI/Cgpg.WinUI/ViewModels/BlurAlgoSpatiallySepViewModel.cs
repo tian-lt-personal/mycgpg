@@ -273,13 +273,13 @@ internal sealed class BlurAlgoSpatiallySepViewModel : DependencyObject
         sw.Start();
         uiQueue_.TryEnqueue(() => IsProcessing1 = true);
         var kernelWidth = sampleRadius * 2 + 1;
-        ImageLowFilter.Generate2DGaussianKernel(
+        ImageLowpassFilter.Generate2DGaussianKernel(
             kernelWidth,
             sigma,
             out var kernel);
 
         var tag = discardProc1_.Tag();
-        if (!ImageLowFilter.ConvolutionBlur(
+        if (!ImageLowpassFilter.ConvolutionBlur(
             width,
             height,
             data,
@@ -341,13 +341,13 @@ internal sealed class BlurAlgoSpatiallySepViewModel : DependencyObject
         sw.Start();
         uiQueue_.TryEnqueue(() => IsProcessing2 = true);
         var kernelWidth = sampleRadius * 2 + 1;
-        ImageLowFilter.Generate1DGaussianKernel(
+        ImageLowpassFilter.Generate1DGaussianKernel(
             kernelWidth,
             sigma,
             out var kernel);
 
         var tag = discardProc2_.Tag();
-        if (!ImageLowFilter.SeparableConvolutionBlur(
+        if (!ImageLowpassFilter.SeparableConvolutionBlur(
             width,
             height,
             data,

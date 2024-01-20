@@ -2,7 +2,7 @@
 
 using System.Diagnostics;
 
-public static class ImageLowFilter
+public static class ImageLowpassFilter
 {
     public static bool BoxBlur(
         int sampleRadius,

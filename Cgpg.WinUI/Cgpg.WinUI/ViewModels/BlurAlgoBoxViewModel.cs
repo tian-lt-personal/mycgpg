@@ -153,7 +153,7 @@ internal sealed class BlurAlgoBoxViewModel : DependencyObject
         uiQueue_.TryEnqueue(() => IsProcessing = true);
 
         var tag = discardProc_.Tag();
-        if (!ImageLowFilter.BoxBlur(
+        if (!ImageLowpassFilter.BoxBlur(
             sampleRadius,
             width,
             height,
