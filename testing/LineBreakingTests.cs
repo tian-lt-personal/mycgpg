@@ -30,7 +30,7 @@ public class LineBreakingTests
 
     private string PrintPara(string text, int lineWidth, int glyphWidth)
     {
-        var currY = 0;
+        var currY = 0.0;
         var sb = new StringBuilder();
         foreach (var (pos, word) in
             GreedyLb.MoveCursor(
@@ -39,7 +39,7 @@ public class LineBreakingTests
                 20,
                 word => GetWordExtent(word, glyphWidth)))
         {
-            if (currY != pos.Y)
+            if (Math.Abs(currY - pos.Y) > 0.001)
             {
                 currY = pos.Y;
                 sb.AppendLine();
@@ -49,8 +49,8 @@ public class LineBreakingTests
         return sb.ToString();
     }
 
-    private static Extent<int> GetWordExtent(string word, int glyphWidth)
+    private static Extent<double> GetWordExtent(string word, int glyphWidth)
     {
-        return new Extent<int> { W = glyphWidth * word.Length, H = 16 };
+        return new Extent<double> { W = glyphWidth * word.Length, H = 16 };
     }
 }

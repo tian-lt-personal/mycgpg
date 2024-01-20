@@ -13,14 +13,13 @@
         </Grid.ColumnDefinitions>
 
         <Grid Margin="8 10 8 0">
-            <StackPanel x:Name="Stack">
+            <StackPanel>
                 <TextBox x:Name="InputTextBox"
                          PlaceholderText="Input text here..."
                          TextChanged="OnInputTextChanged"
                          TextWrapping="Wrap" />
                 <Canvas x:Name="TypesetCanvas"
                         Margin="8 8 8 8"
-                        Width="500" Height="300"
                         Background="White"/>
             </StackPanel>
         </Grid>

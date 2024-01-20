@@ -33,13 +33,13 @@ public class NaiveWb
 
 public class GreedyLb
 {
-    public static IEnumerable<(Position<int>, string)> MoveCursor(
+    public static IEnumerable<(Position<double>, string)> MoveCursor(
         IEnumerable<string> paragraph,
-        int lineWidth,
-        int lineHeight,
-        Func<string, Extent<int>> getWordExtent)
+        double lineWidth,
+        double lineHeight,
+        Func<string, Extent<double>> getWordExtent)
     {
-        var pos = new Position<int> { X = 0, Y = 0 };
+        var pos = new Position<double> { X = 0.0, Y = 0.0 };
         foreach (var word in paragraph)
         {
             var extent = getWordExtent(word);
@@ -54,7 +54,7 @@ public class GreedyLb
                 {
                     throw new InsufficientLineWidthError();
                 }
-                pos.X = 0;
+                pos.X = 0.0;
                 pos.Y += lineHeight;
                 yield return (pos, word);
             }
