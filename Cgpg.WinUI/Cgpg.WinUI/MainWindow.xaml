@@ -29,6 +29,16 @@
                                     Icon="Home"
                                     Tag="tagHome"/>
                 <NavigationViewItemSeparator/>
+                <NavigationViewItem Content="Line-breaking algorithmns"
+                                    Icon="Bookmarks"
+                                    SelectsOnInvoked="False"
+                                    IsExpanded="True">
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Greedy"
+                                            Tag="tagLbGreedy"/>
+                        <NavigationViewItem Content="Knuth-Plass"/>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Blur algorithmns"
                                     Icon="Bookmarks"
                                     SelectsOnInvoked="False"

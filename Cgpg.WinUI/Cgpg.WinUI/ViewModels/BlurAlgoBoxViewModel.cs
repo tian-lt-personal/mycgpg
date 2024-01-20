@@ -4,14 +4,14 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Cgpg.WinUI.Slices;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
-using MyCgpg;
-using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
+using MyCgpg;
+
+using Cgpg.WinUI.Slices;
 
 internal sealed class BlurAlgoBoxViewModel : DependencyObject
 {
