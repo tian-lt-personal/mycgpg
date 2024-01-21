@@ -20,8 +20,8 @@
                          TextWrapping="Wrap" />
                 <canvas:CanvasControl x:Name="TypesetCanvas"
                                       Margin="8 8 8 8"
-                                      Width="300"
-                                      Height="300"
+                                      Width="{x:Bind LineWidth, Mode=OneWay}"
+                                      Height="{x:Bind PageHeight, Mode=OneWay}"
                                       Draw="TypesetCanvas_Draw"
                                       Background="White" />
             </StackPanel>
@@ -30,10 +30,26 @@
         <Grid Grid.Column="1"
               Margin="4 10 4 10"
               Background="White"
+              Padding="8"
               CornerRadius="8">
             <StackPanel Orientation="Vertical"
                         Margin="0 8 0 8"
                         Spacing="4">
+                <Slider Header="Line width:"
+                        Value="{x:Bind LineWidth, Mode=TwoWay}"
+                        Minimum="100"
+                        Maximum="1200"
+                        StepFrequency="10" />
+                <Slider Header="Line height:"
+                        Value="{x:Bind LineHeight, Mode=TwoWay}"
+                        Minimum="0"
+                        Maximum="50"
+                        StepFrequency="2" />
+                <Slider Header="Whitespace width:"
+                        Value="{x:Bind WsWidth, Mode=TwoWay}"
+                        Minimum="0"
+                        Maximum="20"
+                        StepFrequency="1" />
             </StackPanel>
         </Grid>
     </Grid>
