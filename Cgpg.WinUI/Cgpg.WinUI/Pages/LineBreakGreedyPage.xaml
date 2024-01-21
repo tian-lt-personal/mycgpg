@@ -1,15 +1,15 @@
-<Page
-    x:Class="Cgpg.WinUI.Pages.LineBreakGreedyPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+<Page x:Class="Cgpg.WinUI.Pages.LineBreakGreedyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
 
         <Grid Margin="8 10 8 0">
@@ -18,9 +18,12 @@
                          PlaceholderText="Input text here..."
                          TextChanged="OnInputTextChanged"
                          TextWrapping="Wrap" />
-                <Canvas x:Name="TypesetCanvas"
-                        Margin="8 8 8 8"
-                        Background="White"/>
+                <canvas:CanvasControl x:Name="TypesetCanvas"
+                                      Margin="8 8 8 8"
+                                      Width="300"
+                                      Height="300"
+                                      Draw="TypesetCanvas_Draw"
+                                      Background="White" />
             </StackPanel>
         </Grid>
 

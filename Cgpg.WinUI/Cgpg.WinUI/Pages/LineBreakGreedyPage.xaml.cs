@@ -1,17 +1,17 @@
-using System;
-using System.Collections.Generic;
+using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.UI;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media;
 using MyCgpg;
 using MyCgpg.Model;
+using System.Collections.Generic;
 
 namespace Cgpg.WinUI.Pages;
 
 public sealed partial class LineBreakGreedyPage : Page
 {
-    private readonly Dictionary<string, Glyphs> _cachedGlyphs = new Dictionary<string, Glyphs>();
+    private readonly List<(Position<double>, CanvasTextLayout)> _textBlocks = new List<(Position<double>, CanvasTextLayout)>();
     public int LineWidth = 300;
     public int LineHeight = 20;
 
@@ -22,40 +22,38 @@ public sealed partial class LineBreakGreedyPage : Page
 
     public void OnInputTextChanged(object sender, TextChangedEventArgs args)
     {
+        _textBlocks.Clear();
         foreach (var (pos, word) in GreedyLb.MoveCursor(
             NaiveWb.MoveWord(InputTextBox.Text),
             LineWidth,
             LineHeight,
             GetWordExtent))
         {
+            _textBlocks.Add((pos, GetTextLayout(word)));
         }
+        TypesetCanvas.Invalidate();
     }
 
     private Extent<double> GetWordExtent(string word)
     {
-        var glyphs = GetGlyphs(word);
-        return new Extent<double> { W = glyphs.ActualWidth, H = glyphs.ActualHeight };
+        var text = GetTextLayout(word);
+        return new Extent<double> { W = text.LayoutBounds.Width, H = text.LayoutBounds.Height };
     }
 
-    private Glyphs GetGlyphs(string word)
+    private CanvasTextLayout GetTextLayout(string word)
     {
-        if (_cachedGlyphs.TryGetValue(word, out var glyphs))
+        var fmt = new CanvasTextFormat { FontFamily = "Arial.ttf", FontSize = 16, FontWeight = FontWeights.Normal };
+        var layout = new CanvasTextLayout(TypesetCanvas.Device, word, fmt, 100, 100);
+        return layout;
+    }
+
+    private void TypesetCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+    {
+        var ds = args.DrawingSession;
+        ds.Clear(Colors.White);
+        foreach (var (pos, text) in _textBlocks)
         {
-            return glyphs;
-        }
-        else
-        {
-            var newGlyphs = new Glyphs
-            {
-                FontUri = new Uri("ms-appx:///Assets/Arial.ttf"),
-                FontRenderingEmSize = 16.0,
-                StyleSimulations = StyleSimulations.None,
-                UnicodeString = word,
-                Fill = new SolidColorBrush(Colors.Black),
-                Opacity = 1,
-            };
-            _cachedGlyphs.Add(word, newGlyphs);
-            return newGlyphs;
+            ds.DrawTextLayout(text, new System.Numerics.Vector2 { X = (float)pos.X, Y = (float)pos.Y }, Colors.Black);
         }
     }
 }

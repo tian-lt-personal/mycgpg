@@ -45,8 +45,9 @@ public class GreedyLb
             var extent = getWordExtent(word);
             if (pos.X + extent.W <= lineWidth)
             {
+                var retval = pos;
                 pos.X += extent.W;
-                yield return (pos, word);
+                yield return (retval, word);
             }
             else
             {
