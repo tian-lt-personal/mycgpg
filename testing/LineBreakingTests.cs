@@ -16,7 +16,7 @@ public class LineBreakingTests
     [TestCase("  ", 8, 8, ExpectedResult = " \r\n ")]
     [TestCase(" ", 1, 8, ExpectedResult = null)]
     [TestCase("hello line breaking algo", 80, 8, ExpectedResult = "hello line\r\n breaking \r\nalgo")]
-    [TestCase("hello line breaking algo", 100, 8, ExpectedResult = "hello line \r\nbreaking algo")]
+    [TestCase("hello line breaking algo", 100, 8, ExpectedResult = "hello line \r\nbreaking \r\nalgo")]
     public string? FixedWith(string paragraph, int lineWidth, int glyphWidth)
     {
         try

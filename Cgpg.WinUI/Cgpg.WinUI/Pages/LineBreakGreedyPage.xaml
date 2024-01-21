@@ -17,7 +17,7 @@
                 <TextBox x:Name="InputTextBox"
                          PlaceholderText="Input text here..."
                          TextChanged="OnInputTextChanged"
-                         TextWrapping="Wrap" />
+                         TextWrapping="NoWrap" />
                 <canvas:CanvasControl x:Name="TypesetCanvas"
                                       Margin="8 8 8 8"
                                       Width="{x:Bind LineWidth, Mode=OneWay}"

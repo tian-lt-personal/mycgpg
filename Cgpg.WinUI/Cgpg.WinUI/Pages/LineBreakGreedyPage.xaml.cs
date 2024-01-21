@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using MyCgpg;
 using MyCgpg.Model;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Cgpg.WinUI.Pages;
 
@@ -44,6 +45,7 @@ public sealed partial class LineBreakGreedyPage : Page
         get => (int)GetValue(PageHeightProperty);
         set => SetValue(PageHeightProperty, value);
     }
+
     public int LineWidth
     {
         get => (int)GetValue(LineWidthProperty);
@@ -53,6 +55,7 @@ public sealed partial class LineBreakGreedyPage : Page
             UpdateTypeset();
         }
     }
+
     public int LineHeight
     {
         get => (int)GetValue(LineHeightProperty);
@@ -62,6 +65,7 @@ public sealed partial class LineBreakGreedyPage : Page
             UpdateTypeset();
         }
     }
+
     public int WsWidth
     {
         get => (int)GetValue(WsWidthProperty);
@@ -133,5 +137,10 @@ public sealed partial class LineBreakGreedyPage : Page
             if (text == null) continue;
             ds.DrawTextLayout(text, new System.Numerics.Vector2 { X = pos.X, Y = pos.Y }, Colors.Black);
         }
+    }
+
+    private void Dump((Position<float>, CanvasTextLayout) block)
+    {
+        Debug.Print($"Pos = {block.Item1.X}, {block.Item1.Y}, IsWs = {block.Item2 == null}");
     }
 }

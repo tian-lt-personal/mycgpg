@@ -55,9 +55,9 @@ public class GreedyLb
                 {
                     throw new InsufficientLineWidthError();
                 }
-                pos.X = 0.0f;
+                pos.X = extent.W;
                 pos.Y += lineHeight;
-                yield return (pos, word);
+                yield return (new Position<float> { X = 0.0f, Y = pos.Y }, word);
             }
         }
         yield break;
