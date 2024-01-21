@@ -11,7 +11,7 @@ namespace Cgpg.WinUI.Pages;
 
 public sealed partial class LineBreakGreedyPage : Page
 {
-    private readonly List<(Position<double>, CanvasTextLayout)> _textBlocks = new List<(Position<double>, CanvasTextLayout)>();
+    private readonly List<(Position<float>, CanvasTextLayout)> _textBlocks = new List<(Position<float>, CanvasTextLayout)>();
     public int LineWidth = 300;
     public int LineHeight = 20;
 
@@ -34,16 +34,16 @@ public sealed partial class LineBreakGreedyPage : Page
         TypesetCanvas.Invalidate();
     }
 
-    private Extent<double> GetWordExtent(string word)
+    private Extent<float> GetWordExtent(string word)
     {
         var text = GetTextLayout(word);
-        return new Extent<double> { W = text.LayoutBounds.Width, H = text.LayoutBounds.Height };
+        return new Extent<float> { W = (float)text.LayoutBounds.Width, H = (float)text.LayoutBounds.Height };
     }
 
     private CanvasTextLayout GetTextLayout(string word)
     {
         var fmt = new CanvasTextFormat { FontFamily = "Arial.ttf", FontSize = 16, FontWeight = FontWeights.Normal };
-        var layout = new CanvasTextLayout(TypesetCanvas.Device, word, fmt, 100, 100);
+        var layout = new CanvasTextLayout(TypesetCanvas.Device, word, fmt, float.PositiveInfinity, float.PositiveInfinity);
         return layout;
     }
 
@@ -53,7 +53,7 @@ public sealed partial class LineBreakGreedyPage : Page
         ds.Clear(Colors.White);
         foreach (var (pos, text) in _textBlocks)
         {
-            ds.DrawTextLayout(text, new System.Numerics.Vector2 { X = (float)pos.X, Y = (float)pos.Y }, Colors.Black);
+            ds.DrawTextLayout(text, new System.Numerics.Vector2 { X = pos.X, Y = pos.Y }, Colors.Black);
         }
     }
 }

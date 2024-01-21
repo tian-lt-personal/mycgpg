@@ -50,8 +50,8 @@ public class LineBreakingTests
         return sb.ToString();
     }
 
-    private static Extent<double> GetWordExtent(string word, int glyphWidth)
+    private static Extent<float> GetWordExtent(string word, int glyphWidth)
     {
-        return new Extent<double> { W = glyphWidth * word.Length, H = 16 };
+        return new Extent<float> { W = glyphWidth * word.Length, H = 16.0f };
     }
 }
