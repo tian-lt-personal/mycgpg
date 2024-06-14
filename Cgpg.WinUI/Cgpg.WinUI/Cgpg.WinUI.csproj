@@ -19,6 +19,7 @@
     <None Remove="Pages\HomePage.xaml" />
     <None Remove="Pages\LineBreakGreedyPage.xaml" />
     <None Remove="Pages\NotFoundPage.xaml" />
+    <None Remove="Pages\ShapeManPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -24,6 +24,8 @@ public sealed partial class MainWindow : Window
             { "tagBlurAlgoSeparable", wnd => wnd.MainFrame.Navigate(typeof(BlurAlgoSpatiallySepPage)) },
             { "tagBlurAlgoCustom", wnd => wnd.MainFrame.Navigate(typeof(BlurAlgoCustomPage)) },
             { "tagLbGreedy", wnd => wnd.MainFrame.Navigate(typeof(LineBreakGreedyPage)) },
+
+            { "tagSmTransform", wnd => wnd.MainFrame.Navigate(typeof(ShapeManPage)) },
         };
 
     public MainWindow()

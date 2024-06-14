@@ -7,59 +7,76 @@
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    Spacing="4">
-            <Image x:Name="AppIcon"
-                   Width="16"
-                   Height="16"
-                   Margin="8 0 0 0"
-                   VerticalAlignment="Center"/>
-            <TextBlock Text="CG playground"
-                       VerticalAlignment="Center"/>
+        <StackPanel
+            Grid.Row="0"
+            Orientation="Horizontal"
+            Spacing="4">
+            <Image
+                x:Name="AppIcon"
+                Width="16"
+                Height="16"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center" />
+            <TextBlock VerticalAlignment="Center" Text="CG playground" />
         </StackPanel>
-        <NavigationView x:Name="Navigator"
-                        Grid.Row="1"
-                        SelectionChanged="Navigator_SelectionChanged">
+        <NavigationView
+            x:Name="Navigator"
+            Grid.Row="1"
+            SelectionChanged="Navigator_SelectionChanged">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Home"
-                                    Icon="Home"
-                                    Tag="tagHome"/>
-                <NavigationViewItemSeparator/>
-                <NavigationViewItem Content="Line-breaking algorithmns"
-                                    Icon="Bookmarks"
-                                    SelectsOnInvoked="False"
-                                    IsExpanded="True">
+                <NavigationViewItem
+                    Content="Home"
+                    Icon="Home"
+                    Tag="tagHome" />
+                <NavigationViewItemSeparator />
+                <NavigationViewItem
+                    Content="Blur algorithmns"
+                    Icon="Bookmarks"
+                    IsExpanded="True"
+                    SelectsOnInvoked="False">
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Greedy"
-                                            Tag="tagLbGreedy"/>
-                        <NavigationViewItem Content="Knuth-Plass"/>
+                        <NavigationViewItem
+                            Content="Box kernel"
+                            Icon="Document"
+                            Tag="tagBlurAlgoBox" />
+                        <NavigationViewItem
+                            Content="Gaussian kernel"
+                            Icon="Document"
+                            Tag="tagBlurAlgoGaussian" />
+                        <NavigationViewItem
+                            Content="Spatially separable kernel"
+                            Icon="Document"
+                            Tag="tagBlurAlgoSeparable" />
+                        <NavigationViewItem
+                            Content="Custom kernel"
+                            Icon="Document"
+                            Tag="tagBlurAlgoCustom" />
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Blur algorithmns"
-                                    Icon="Bookmarks"
-                                    SelectsOnInvoked="False"
-                                    IsExpanded="True">
+                <NavigationViewItem
+                    Content="Line-breaking algorithmns"
+                    Icon="Bookmarks"
+                    IsExpanded="True"
+                    SelectsOnInvoked="False">
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Box kernel"
-                                            Icon="Document"
-                                            Tag="tagBlurAlgoBox"/>
-                        <NavigationViewItem Content="Gaussian kernel"
-                                            Icon="Document"
-                                            Tag="tagBlurAlgoGaussian"/>
-                        <NavigationViewItem Content="Spatially separable kernel"
-                                            Icon="Document"
-                                            Tag="tagBlurAlgoSeparable"/>
-                        <NavigationViewItem Content="Custom kernel"
-                                            Icon="Document"
-                                            Tag="tagBlurAlgoCustom"/>
+                        <NavigationViewItem Content="Greedy" Tag="tagLbGreedy" />
+                        <NavigationViewItem Content="Knuth-Plass" />
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+                <NavigationViewItem
+                    Content="Shapes manipulation"
+                    Icon="Bookmarks"
+                    IsExpanded="True"
+                    SelectsOnInvoked="False">
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Transformation" Tag="tagSmTransform" />
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
-            <Frame x:Name="MainFrame"/>
+            <Frame x:Name="MainFrame" />
         </NavigationView>
     </Grid>
 </Window>
