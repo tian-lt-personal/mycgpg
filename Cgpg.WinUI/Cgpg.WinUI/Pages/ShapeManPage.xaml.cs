@@ -26,7 +26,7 @@ internal sealed class RectangleCreator
 
     public void Move(double x, double y)
     {
-        Coord = new Matrix {  };
+        Coord = new Matrix { };
     }
 }
 
