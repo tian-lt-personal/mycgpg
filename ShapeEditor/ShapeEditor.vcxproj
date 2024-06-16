@@ -143,12 +143,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DxRes.cpp" />
+    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ShapeEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DxRes.h" />
+    <ClInclude Include="Editor.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
