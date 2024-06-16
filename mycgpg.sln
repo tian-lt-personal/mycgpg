@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libcg", "libcg\libcg.csproj
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Cgpg.WinUI (Package)", "Cgpg.WinUI\Cgpg.WinUI (Package)\Cgpg.WinUI (Package).wapproj", "{DF6DE145-A81E-4EA6-A758-E1C9152DD6D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cgpg.WinUI", "Cgpg.WinUI\Cgpg.WinUI\Cgpg.WinUI.csproj", "{69AB487A-94CE-490C-B833-B29A0C89967C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cgpg.WinUI", "Cgpg.WinUI\Cgpg.WinUI\Cgpg.WinUI.csproj", "{69AB487A-94CE-490C-B833-B29A0C89967C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testing", "testing\testing.csproj", "{541D186C-CF15-4197-9C97-178C50CBB634}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "testing", "testing\testing.csproj", "{541D186C-CF15-4197-9C97-178C50CBB634}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShapeEditor", "ShapeEditor\ShapeEditor.vcxproj", "{739D4388-110F-4FAC-AA65-EAF7E72AD65C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +97,22 @@ Global
 		{541D186C-CF15-4197-9C97-178C50CBB634}.Release|x64.Build.0 = Release|Any CPU
 		{541D186C-CF15-4197-9C97-178C50CBB634}.Release|x86.ActiveCfg = Release|Any CPU
 		{541D186C-CF15-4197-9C97-178C50CBB634}.Release|x86.Build.0 = Release|Any CPU
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Debug|Any CPU.Build.0 = Debug|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Debug|arm64.ActiveCfg = Debug|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Debug|arm64.Build.0 = Debug|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Debug|x64.ActiveCfg = Debug|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Debug|x64.Build.0 = Debug|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Debug|x86.ActiveCfg = Debug|Win32
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Debug|x86.Build.0 = Debug|Win32
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Release|Any CPU.ActiveCfg = Release|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Release|Any CPU.Build.0 = Release|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Release|arm64.ActiveCfg = Release|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Release|arm64.Build.0 = Release|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Release|x64.ActiveCfg = Release|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Release|x64.Build.0 = Release|x64
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Release|x86.ActiveCfg = Release|Win32
+		{739D4388-110F-4FAC-AA65-EAF7E72AD65C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

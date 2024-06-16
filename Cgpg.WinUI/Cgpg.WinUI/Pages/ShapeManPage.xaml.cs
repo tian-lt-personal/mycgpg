@@ -76,7 +76,6 @@ public sealed partial class ShapeManPage : Page
     private void CanvasManDelta(object sender, ManipulationDeltaRoutedEventArgs args)
     {
         ManDeltaPos = $"({args.Position.X}, {args.Position.Y})";
-        _creator.MoveDelta(args.Position.X, args.Position.Y);
     }
 
     private void CanvasManCompleted(object sender, ManipulationCompletedRoutedEventArgs args)
