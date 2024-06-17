@@ -31,7 +31,7 @@ WindowContext& Context(HWND hwnd) {
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
   switch (msg) {
     case WM_SIZE: {
-      if (wparam == SIZE_RESTORED) {
+      if (wparam == SIZE_RESTORED || wparam == SIZE_MAXIMIZED) {
         auto& ctx = Context(hwnd);
         ctx.Editor.Resize(LOWORD(lparam), HIWORD(lparam) - 40);
       }
@@ -41,8 +41,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
       auto params = reinterpret_cast<CREATESTRUCTW*>(lparam);
       auto ctx = reinterpret_cast<std::optional<WindowContext>*>(
           params->lpCreateParams);
-      Editor editor{hwnd, 0, 40, static_cast<uint32_t>(params->cx),
-                    static_cast<uint32_t>(params->cy - 40)};
+      RECT rect;
+      GetClientRect(hwnd, &rect);
+      Editor editor{hwnd, 0, 40, static_cast<uint32_t>(rect.right - rect.left),
+                    static_cast<uint32_t>(rect.bottom - rect.top - 40)};
       *ctx = WindowContext{.Editor = std::move(editor)};
       SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&*ctx));
       return 0;
@@ -57,6 +59,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 }  // namespace
 
 extern "C" int WINAPI wWinMain(HINSTANCE hinst, HINSTANCE, PWSTR, int cmdshow) {
+  SetProcessDPIAware();
   RegisterWndClass(hinst, WndProc);
   std::optional<WindowContext> ctx;  // use optional for delay-init
   wil::unique_hwnd hwnd{CreateWindowExW(

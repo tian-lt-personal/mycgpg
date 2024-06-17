@@ -20,7 +20,7 @@ ATOM RegisterEditorClass(HINSTANCE hinst, WNDPROC wndproc) {
                    .lpfnWndProc = wndproc,
                    .hInstance = hinst,
                    .hCursor = LoadCursorW(NULL, IDC_ARROW),
-                   .hbrBackground = (HBRUSH)(COLOR_WINDOW + 1),
+                   .hbrBackground = (HBRUSH)(COLOR_WINDOW),
                    .lpszClassName = L"InternalEditorClass"};
   auto result = RegisterClassExW(&wcex);
   if (!result) {
@@ -35,18 +35,13 @@ Editor& Self(HWND hwnd) {
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
   switch (msg) {
-    case WM_SIZE:
-      if (wparam == SIZE_RESTORED) {
-      }
-      return 0;
     case WM_CREATE: {
       auto params = reinterpret_cast<CREATESTRUCTW*>(lparam);
       SetWindowLongPtrW(hwnd, GWLP_USERDATA,
                         reinterpret_cast<LONG_PTR>(params->lpCreateParams));
       Accessor::AssignGraphicsContext(
-          Self(hwnd),
-          grph::Context{params->hwndParent, static_cast<uint32_t>(params->cx),
-                        static_cast<uint32_t>(params->cy)});
+          Self(hwnd), grph::Context{hwnd, static_cast<uint32_t>(params->cx),
+                                    static_cast<uint32_t>(params->cy)});
       return 0;
     }
   }
@@ -60,19 +55,20 @@ Editor::Editor(HWND parent, int x, int y, uint32_t width, uint32_t height)
   auto hinst =
       reinterpret_cast<HINSTANCE>(GetWindowLongPtrW(parent, GWLP_HINSTANCE));
   static auto registerResult = RegisterEditorClass(hinst, WndProc);
-  wil::unique_hwnd hwnd{CreateWindowExW(
-      0, L"InternalEditorClass", L"Internal Editor", WS_CHILD | WS_VISIBLE, x,
-      y, width, height, parent, nullptr, hinst, this)};
-  if (!hwnd.is_valid()) {
+  hwnd_ = wil::unique_hwnd{
+      CreateWindowExW(0, L"InternalEditorClass", L"Internal Editor",
+                      WS_CHILD | WS_VISIBLE | WS_BORDER, x, y, width, height,
+                      parent, nullptr, hinst, this)};
+  if (!hwnd_.is_valid()) {
     throw std::runtime_error{"Failed to create Internal Editor Window."};
   }
   assert(graphicsContext_.has_value());
 }
 
 void Editor::Resize(uint32_t width, uint32_t height) {
+  SetWindowPos(hwnd_.get(), nullptr, 0, 0, width, height,
+               SWP_NOMOVE | SWP_NOZORDER);
   graphicsContext_->Resize(width, height);
 }
 
-void Editor::Tick() const {
-
-}
+void Editor::Tick() const { graphicsContext_->Present(); }

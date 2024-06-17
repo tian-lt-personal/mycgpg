@@ -11,6 +11,7 @@ class Editor {
   void Tick() const;
 
  private:
-  HWND hwndParent_;
   std::optional<grph::Context> graphicsContext_;
+  wil::unique_hwnd hwnd_;
+  HWND hwndParent_;
 };
