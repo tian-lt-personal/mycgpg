@@ -18,6 +18,7 @@
 #include <wil/resource.h>
 
 // dx headers
+#include <DirectXMath.h>
 #include <d3d11.h>
 #include <d3d11_1.h>
 #pragma comment(lib, "D3D11.lib")

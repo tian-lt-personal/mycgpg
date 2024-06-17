@@ -149,11 +149,13 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ShapeEditor.cpp" />
+    <ClCompile Include="Shapes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DxRes.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Shapes.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -4,7 +4,9 @@
 
 namespace grph {
 
-struct Vertices {};
+struct Vertices {
+  wil::com_ptr<ID3D11Buffer> VertexBuffer;
+};
 
 struct Pipeline {};
 
