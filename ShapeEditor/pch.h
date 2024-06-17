@@ -4,6 +4,7 @@
 #endif  // !UNICODE
 
 // std headers
+#include <cassert>
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -18,6 +19,7 @@
 
 // dx headers
 #include <d3d11.h>
+#include <d3d11_1.h>
 #pragma comment(lib, "D3D11.lib")
 
 inline void check_hr(HRESULT hr) {

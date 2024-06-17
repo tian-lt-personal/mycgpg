@@ -8,9 +8,6 @@ struct Editor::Accessor {
   static void AssignGraphicsContext(Editor& self, grph::Context context) {
     self.graphicsContext_ = std::move(context);
   }
-  static void Resize(Editor& self, uint32_t width, uint32_t height) {
-    self.graphicsContext_->Resize(width, height);
-  }
 };
 
 namespace {
@@ -40,7 +37,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
   switch (msg) {
     case WM_SIZE:
       if (wparam == SIZE_RESTORED) {
-        Accessor::Resize(Self(hwnd), LOWORD(lparam), HIWORD(lparam));
       }
       return 0;
     case WM_CREATE: {
@@ -59,15 +55,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 }  // namespace
 
-Editor::Editor(HWND parent, uint32_t width, uint32_t height)
+Editor::Editor(HWND parent, int x, int y, uint32_t width, uint32_t height)
     : hwndParent_(parent) {
   auto hinst =
       reinterpret_cast<HINSTANCE>(GetWindowLongPtrW(parent, GWLP_HINSTANCE));
   static auto registerResult = RegisterEditorClass(hinst, WndProc);
   wil::unique_hwnd hwnd{CreateWindowExW(
-      0, L"InternalEditorClass", L"Internal Editor", WS_CHILD | WS_VISIBLE, 0,
-      0, width, height, parent, nullptr, hinst, this)};
+      0, L"InternalEditorClass", L"Internal Editor", WS_CHILD | WS_VISIBLE, x,
+      y, width, height, parent, nullptr, hinst, this)};
   if (!hwnd.is_valid()) {
     throw std::runtime_error{"Failed to create Internal Editor Window."};
   }
+  assert(graphicsContext_.has_value());
+}
+
+void Editor::Resize(uint32_t width, uint32_t height) {
+  graphicsContext_->Resize(width, height);
+}
+
+void Editor::Tick() const {
+
 }

@@ -23,14 +23,26 @@ struct WindowContext {
   Editor Editor;
 };
 
+WindowContext& Context(HWND hwnd) {
+  return *reinterpret_cast<WindowContext*>(
+      GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+}
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
   switch (msg) {
+    case WM_SIZE: {
+      if (wparam == SIZE_RESTORED) {
+        auto& ctx = Context(hwnd);
+        ctx.Editor.Resize(LOWORD(lparam), HIWORD(lparam) - 40);
+      }
+      return 0;
+    }
     case WM_CREATE: {
       auto params = reinterpret_cast<CREATESTRUCTW*>(lparam);
       auto ctx = reinterpret_cast<std::optional<WindowContext>*>(
           params->lpCreateParams);
-      Editor editor{hwnd, static_cast<uint32_t>(params->cx),
-                    static_cast<uint32_t>(params->cy)};
+      Editor editor{hwnd, 0, 40, static_cast<uint32_t>(params->cx),
+                    static_cast<uint32_t>(params->cy - 40)};
       *ctx = WindowContext{.Editor = std::move(editor)};
       SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&*ctx));
       return 0;
@@ -54,10 +66,21 @@ extern "C" int WINAPI wWinMain(HINSTANCE hinst, HINSTANCE, PWSTR, int cmdshow) {
     std::terminate();
   }
   ShowWindow(hwnd.get(), cmdshow);
+  assert(ctx.has_value());
   MSG msg;
-  while (GetMessageW(&msg, nullptr, 0, 0)) {
-    TranslateMessage(&msg);
-    DispatchMessageW(&msg);
+  while (true) {
+    auto hasMsg = PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE);
+    if (!hasMsg) {
+      ctx->Editor.Tick();
+    } else {
+      if (msg.message != WM_QUIT) {
+        TranslateMessage(&msg);
+        DispatchMessageW(&msg);
+      } else {
+        break;
+      }
+    }
   }
+
   return 0;
 }

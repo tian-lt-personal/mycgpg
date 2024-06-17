@@ -6,7 +6,9 @@ class Editor {
   struct Accessor;
 
  public:
-  explicit Editor(HWND parent, uint32_t width, uint32_t height);
+  explicit Editor(HWND parent, int x, int y, uint32_t width, uint32_t height);
+  void Resize(uint32_t width, uint32_t height);
+  void Tick() const;
 
  private:
   HWND hwndParent_;
