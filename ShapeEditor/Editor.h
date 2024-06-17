@@ -7,8 +7,12 @@ class Editor {
 
  public:
   explicit Editor(HWND parent, int x, int y, uint32_t width, uint32_t height);
+  Editor(const Editor&) = delete;
+  Editor(Editor&& rhs) noexcept;
+  Editor& operator=(const Editor&) = delete;
+  Editor& operator=(Editor&& rhs) noexcept;
+
   void Resize(uint32_t width, uint32_t height);
-  void Tick() const;
 
  private:
   std::optional<grph::Context> graphicsContext_;

@@ -8,6 +8,7 @@ struct Editor::Accessor {
   static void AssignGraphicsContext(Editor& self, grph::Context context) {
     self.graphicsContext_ = std::move(context);
   }
+  static void Repaint(Editor& self) { self.graphicsContext_->Present(); }
 };
 
 namespace {
@@ -35,6 +36,13 @@ Editor& Self(HWND hwnd) {
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
   switch (msg) {
+    case WM_PAINT: {
+      PAINTSTRUCT ps;
+      BeginPaint(hwnd, &ps);
+      Accessor::Repaint(Self(hwnd));
+      EndPaint(hwnd, &ps);
+      return 0;
+    }
     case WM_CREATE: {
       auto params = reinterpret_cast<CREATESTRUCTW*>(lparam);
       SetWindowLongPtrW(hwnd, GWLP_USERDATA,
@@ -65,10 +73,28 @@ Editor::Editor(HWND parent, int x, int y, uint32_t width, uint32_t height)
   assert(graphicsContext_.has_value());
 }
 
+Editor::Editor(Editor&& rhs) noexcept
+    : graphicsContext_(std::move(rhs.graphicsContext_)),
+      hwnd_(std::move(rhs.hwnd_)),
+      hwndParent_(std::exchange(rhs.hwndParent_, nullptr)) {
+  if (hwnd_.is_valid()) {
+    SetWindowLongPtrW(hwnd_.get(), GWLP_USERDATA,
+                      reinterpret_cast<LONG_PTR>(this));
+  }
+}
+Editor& Editor::operator=(Editor&& rhs) noexcept {
+  graphicsContext_ = std::move(rhs.graphicsContext_);
+  hwnd_ = std::move(rhs.hwnd_);
+  hwndParent_ = std::exchange(rhs.hwndParent_, nullptr);
+  if (hwnd_.is_valid()) {
+    SetWindowLongPtrW(hwnd_.get(), GWLP_USERDATA,
+                      reinterpret_cast<LONG_PTR>(this));
+  }
+  return *this;
+}
+
 void Editor::Resize(uint32_t width, uint32_t height) {
   SetWindowPos(hwnd_.get(), nullptr, 0, 0, width, height,
                SWP_NOMOVE | SWP_NOZORDER);
   graphicsContext_->Resize(width, height);
 }
-
-void Editor::Tick() const { graphicsContext_->Present(); }

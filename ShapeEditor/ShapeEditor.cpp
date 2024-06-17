@@ -8,7 +8,7 @@ namespace {
 
 void RegisterWndClass(HINSTANCE hinst, WNDPROC wndproc) {
   WNDCLASSEXW wcex{.cbSize = sizeof(WNDCLASSEXW),
-                   .style = CS_VREDRAW | CS_HREDRAW | CS_DROPSHADOW,
+                   .style = CS_VREDRAW | CS_HREDRAW,
                    .lpfnWndProc = wndproc,
                    .hInstance = hinst,
                    .hCursor = LoadCursorW(NULL, IDC_ARROW),
@@ -71,19 +71,9 @@ extern "C" int WINAPI wWinMain(HINSTANCE hinst, HINSTANCE, PWSTR, int cmdshow) {
   ShowWindow(hwnd.get(), cmdshow);
   assert(ctx.has_value());
   MSG msg;
-  while (true) {
-    auto hasMsg = PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE);
-    if (!hasMsg) {
-      ctx->Editor.Tick();
-    } else {
-      if (msg.message != WM_QUIT) {
-        TranslateMessage(&msg);
-        DispatchMessageW(&msg);
-      } else {
-        break;
-      }
-    }
+  while (GetMessageW(&msg, nullptr, 0, 0)) {
+    TranslateMessage(&msg);
+    DispatchMessageW(&msg);
   }
-
   return 0;
 }
