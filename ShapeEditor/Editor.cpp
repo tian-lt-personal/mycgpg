@@ -9,6 +9,9 @@ struct Editor::Accessor {
     self.graphicsContext_ = std::move(context);
   }
   static void Repaint(Editor& self) { self.graphicsContext_->Present(); }
+  static void LMouseDown(Editor&, int, int) {}
+  static void LMouseUp(Editor&, int, int) {}
+  static void MouseMove(Editor&, int, int) {}
 };
 
 namespace {
@@ -36,6 +39,21 @@ Editor& Self(HWND hwnd) {
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
   switch (msg) {
+    case WM_MOUSEMOVE: {
+      Accessor::MouseMove(Self(hwnd), GET_X_LPARAM(lparam),
+                          GET_Y_LPARAM(lparam));
+      return 0;
+    }
+    case WM_LBUTTONDOWN: {
+      Accessor::LMouseDown(Self(hwnd), GET_X_LPARAM(lparam),
+                           GET_Y_LPARAM(lparam));
+      return 0;
+    }
+    case WM_LBUTTONUP: {
+      Accessor::LMouseUp(Self(hwnd), GET_X_LPARAM(lparam),
+                         GET_Y_LPARAM(lparam));
+      return 0;
+    }
     case WM_PAINT: {
       PAINTSTRUCT ps;
       BeginPaint(hwnd, &ps);

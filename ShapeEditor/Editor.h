@@ -1,5 +1,6 @@
 #pragma once
 #include "DxRes.h"
+#include "Shapes.h"
 
 class Editor {
  public:
@@ -15,6 +16,7 @@ class Editor {
   void Resize(uint32_t width, uint32_t height);
 
  private:
+  Node root;
   std::optional<grph::Context> graphicsContext_;
   wil::unique_hwnd hwnd_;
   HWND hwndParent_;

@@ -17,4 +17,4 @@ class Rectangle : Shape {
 
 }  // namespace
 
-std::unique_ptr<Shape> MakeShape(BuiltinShape type) {}
+std::unique_ptr<Shape> MakeShape(BuiltinShape) { return nullptr; }
