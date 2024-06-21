@@ -6,6 +6,15 @@
 
 namespace grph {
 
+std::string ReadBinaryFile(std::filesystem::path path) {
+  std::ifstream file;
+  file.exceptions(std::ios_base::failbit);
+  file.open(path, std::ios_base::in | std::ios_base::binary);
+  std::string content(std::istreambuf_iterator{file},
+                      std::istreambuf_iterator<char>{});
+  return content;
+}
+
 Context::Context(HWND hwnd, uint32_t width, uint32_t height) : hwnd_(hwnd) {
   ResetDevice(width, height);
 }
@@ -24,6 +33,11 @@ void Context::ResetDevice(uint32_t width, uint32_t height) {
                              nullptr));
   device_ = device.query<ID3D11Device1>();
   device_->GetImmediateContext1(devctx_.put());
+
+  for (auto& pl : pipelines_) {
+    pl = Pipeline{device_.get()};
+  }
+
   Resize(width, height);
 }
 
@@ -76,6 +90,20 @@ void Context::Present() const {
   devctx_->ClearRenderTargetView(rtvScreen_.get(), clr);
   schain_->Present(1, 0);
   devctx_->DiscardView1(rtvScreen_.get(), nullptr, 0);
+}
+
+Pipeline* Context::CreatePipeline() {
+  pipelines_.push_back(Pipeline{device_.get()});
+  return &pipelines_.back();
+}
+
+Pipeline::Pipeline(ID3D11Device1* device) {
+  auto code = ReadBinaryFile("VsSimple2d.cso");
+  check_hr(device->CreateVertexShader(code.data(), code.length(), nullptr,
+                                      vs_.put()));
+  code = ReadBinaryFile("PsSimple.cso");
+  check_hr(device->CreatePixelShader(code.data(), code.length(), nullptr,
+                                     ps_.put()));
 }
 
 }  // namespace grph

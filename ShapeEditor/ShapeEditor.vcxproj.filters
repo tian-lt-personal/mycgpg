@@ -47,8 +47,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Types.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VsSimple2d.hlsl" />
+    <FxCompile Include="PsSimple.hlsl" />
   </ItemGroup>
 </Project>

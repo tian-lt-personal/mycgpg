@@ -74,6 +74,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
   return DefWindowProcW(hwnd, msg, wparam, lparam);
 }
 
+Creator::Creator(grph::Context* gctx) : gctx_(gctx) {}
+
 }  // namespace
 
 Editor::Editor(HWND parent, int x, int y, uint32_t width, uint32_t height)
@@ -89,11 +91,15 @@ Editor::Editor(HWND parent, int x, int y, uint32_t width, uint32_t height)
     throw std::runtime_error{"Failed to create Internal Editor Window."};
   }
   assert(graphicsContext_.has_value());
+  pipeline_ = graphicsContext_->CreatePipeline();
 }
 
 Editor::Editor(Editor&& rhs) noexcept
-    : graphicsContext_(std::move(rhs.graphicsContext_)),
+    : root_(std::move(rhs.root_)),
+      graphicsContext_(std::move(rhs.graphicsContext_)),
+      pipeline_(std::exchange(rhs.pipeline_, nullptr)),
       hwnd_(std::move(rhs.hwnd_)),
+      creator_(std::move(rhs.creator_)),
       hwndParent_(std::exchange(rhs.hwndParent_, nullptr)) {
   if (hwnd_.is_valid()) {
     SetWindowLongPtrW(hwnd_.get(), GWLP_USERDATA,
@@ -101,8 +107,11 @@ Editor::Editor(Editor&& rhs) noexcept
   }
 }
 Editor& Editor::operator=(Editor&& rhs) noexcept {
+  root_ = std::move(rhs.root_);
   graphicsContext_ = std::move(rhs.graphicsContext_);
+  pipeline_ = std::exchange(rhs.pipeline_, nullptr);
   hwnd_ = std::move(rhs.hwnd_);
+  creator_ = std::move(rhs.creator_),
   hwndParent_ = std::exchange(rhs.hwndParent_, nullptr);
   if (hwnd_.is_valid()) {
     SetWindowLongPtrW(hwnd_.get(), GWLP_USERDATA,

@@ -2,6 +2,18 @@
 #include "DxRes.h"
 #include "Shapes.h"
 
+namespace {
+
+class Creator {
+ public:
+  explicit Creator(grph::Context* gctx);
+
+ private:
+  grph::Context* gctx_;
+};
+
+}  // namespace
+
 class Editor {
  public:
   struct Accessor;
@@ -16,8 +28,10 @@ class Editor {
   void Resize(uint32_t width, uint32_t height);
 
  private:
-  Node root;
+  Node root_;
   std::optional<grph::Context> graphicsContext_;
+  grph::Pipeline* pipeline_;
   wil::unique_hwnd hwnd_;
+  std::optional<Creator> creator_;
   HWND hwndParent_;
 };
