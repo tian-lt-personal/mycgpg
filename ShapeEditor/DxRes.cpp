@@ -38,6 +38,10 @@ void Context::ResetDevice(uint32_t width, uint32_t height) {
     pl = Pipeline{device_.get()};
   }
 
+  for (auto& q : quads_) {
+    q = Quad{device_.get()};
+  }
+
   Resize(width, height);
 }
 
@@ -97,13 +101,48 @@ Pipeline* Context::CreatePipeline() {
   return &pipelines_.back();
 }
 
+Quad* Context::CreateQuad() {
+  quads_.push_back(Quad{device_.get()});
+  return &quads_.back();
+}
+
 Pipeline::Pipeline(ID3D11Device1* device) {
-  auto code = ReadBinaryFile("VsSimple2d.cso");
-  check_hr(device->CreateVertexShader(code.data(), code.length(), nullptr,
-                                      vs_.put()));
-  code = ReadBinaryFile("PsSimple.cso");
+  auto code = ReadBinaryFile("PsSimple.cso");
   check_hr(device->CreatePixelShader(code.data(), code.length(), nullptr,
                                      ps_.put()));
+  code = ReadBinaryFile("VsSimple2d.cso");
+  check_hr(device->CreateVertexShader(code.data(), code.length(), nullptr,
+                                      vs_.put()));
+  {
+    D3D11_INPUT_ELEMENT_DESC elements[] = {
+        {.SemanticName = "POS",
+         .Format = DXGI_FORMAT_R32G32_FLOAT,
+         .InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA},
+        {.SemanticName = "COL",
+         .Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+         .AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT,
+         .InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA}};
+    check_hr(device->CreateInputLayout(
+        elements, static_cast<UINT>(std::ranges::size(elements)), code.data(),
+        code.length(), vlayout_.put()));
+  }
+}
+
+Quad::Quad(ID3D11Device1* device) {
+  constexpr DirectX::XMFLOAT4A Green{0.1f, 1.f, 0.1f, 1.f};
+  Vertex vertices[] = {// the left half
+                       {.Pos = {-1.f, 1.f}, .Col = Green},
+                       {.Pos = {1.f, -1.f}, .Col = Green},
+                       {.Pos = {-1.f, -1.f}, .Col = Green},
+                       // the right half
+                       {.Pos = {1.f, -1.f}, .Col = Green},
+                       {.Pos = {-1.f, 1.f}, .Col = Green},
+                       {.Pos = {1.f, 1.f}, .Col = Green}};
+  D3D11_BUFFER_DESC desc{.ByteWidth = sizeof(vertices),
+                         .Usage = D3D11_USAGE_IMMUTABLE,
+                         .BindFlags = D3D11_BIND_VERTEX_BUFFER};
+  D3D11_SUBRESOURCE_DATA data{.pSysMem = vertices};
+  check_hr(device->CreateBuffer(&desc, &data, v_.put()));
 }
 
 }  // namespace grph

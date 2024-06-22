@@ -31,6 +31,7 @@ class Editor {
   Node root_;
   std::optional<grph::Context> graphicsContext_;
   grph::Pipeline* pipeline_;
+  grph::Quad* quad_;
   wil::unique_hwnd hwnd_;
   std::optional<Creator> creator_;
   HWND hwndParent_;

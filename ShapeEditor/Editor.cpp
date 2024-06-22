@@ -92,12 +92,14 @@ Editor::Editor(HWND parent, int x, int y, uint32_t width, uint32_t height)
   }
   assert(graphicsContext_.has_value());
   pipeline_ = graphicsContext_->CreatePipeline();
+  quad_ = graphicsContext_->CreateQuad();
 }
 
 Editor::Editor(Editor&& rhs) noexcept
     : root_(std::move(rhs.root_)),
       graphicsContext_(std::move(rhs.graphicsContext_)),
       pipeline_(std::exchange(rhs.pipeline_, nullptr)),
+      quad_(std::exchange(rhs.quad_, nullptr)),
       hwnd_(std::move(rhs.hwnd_)),
       creator_(std::move(rhs.creator_)),
       hwndParent_(std::exchange(rhs.hwndParent_, nullptr)) {
@@ -106,10 +108,12 @@ Editor::Editor(Editor&& rhs) noexcept
                       reinterpret_cast<LONG_PTR>(this));
   }
 }
+
 Editor& Editor::operator=(Editor&& rhs) noexcept {
   root_ = std::move(rhs.root_);
   graphicsContext_ = std::move(rhs.graphicsContext_);
   pipeline_ = std::exchange(rhs.pipeline_, nullptr);
+  quad_ = std::exchange(rhs.quad_, nullptr);
   hwnd_ = std::move(rhs.hwnd_);
   creator_ = std::move(rhs.creator_),
   hwndParent_ = std::exchange(rhs.hwndParent_, nullptr);

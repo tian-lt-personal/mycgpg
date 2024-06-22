@@ -7,12 +7,12 @@
 
 namespace {
 
-class Rectangle : Shape {
+class Rectangle : public Shape {
  public:
   virtual void Draw() const = 0;
 
  private:
-  grph::Vertices vertices;
+  grph::Quad* vertices;
 };
 
 }  // namespace
